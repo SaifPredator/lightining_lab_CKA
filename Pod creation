@@ -1,0 +1,28 @@
+Create a pod called secret-1401 in the admin1401 namespace using the busybox image. The container within the pod should be called secret-admin and should sleep for 4800 seconds.
+
+The container should mount a read-only secret volume called secret-volume at the path /etc/secret-volume. The secret being mounted has already been created for you and is called dotfile-secret.
+Here's an example YAML manifest for creating a pod called secret-1401 in the admin1401 namespace, 
+using the busybox image, with a container called secret-admin that sleeps for 4800 seconds, 
+and mounts a read-only secret volume called secret-volume at the path /etc/secret-volume:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-1401
+  namespace: admin1401
+spec:
+  containers:
+  - name: secret-admin
+    image: busybox
+    command:
+    - "sleep"
+    - "4800"
+    volumeMounts:
+    - name: secret-volume
+      mountPath: /etc/secret-volume
+      readOnly: true
+  volumes:
+  - name: secret-volume
+    secret:
+      secretName: dotfile-secret
+kubectl apply -f secret-1401.yaml
