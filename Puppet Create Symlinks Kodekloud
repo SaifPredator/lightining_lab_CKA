@@ -1,0 +1,73 @@
+
+Question: There are directory structures in the Stratos Datacenter that need to be changed, including directories that need to be linked to the default Apache document root. We need to accomplish this task using only Puppet as per the instructions given below:
+
+Create a puppet programming file official.pp under /etc/puppetlabs/code/environments/production/manifests directory on puppet master node i.e on Jump Server. Within that define a class symlink and perform below mentioned tasks:
+
+    Create a symbolic link through puppet programming code. The source path should be /opt/data and destination path should be /var/www/html on all Puppet agents i.e on all App Servers.
+
+    Create a blank file media.txt under /opt/data directory on all puppet agent nodes i.e on all App Servers.
+
+Note: Please perform this task using official.pp only, do not create any separate inventory file.
+
+ 
+
+Solution: 
+
+In jump_server go to mentioned folder
+
+
+cd /etc/puppetlabs/code/environments/production/manifests
+
+create the file and add configuration
+
+vi official.pp
+
+class symlink {
+
+  # First create a symlink to /var/www/html
+
+  file { '/opt/data':
+
+    ensure => 'link',
+
+    target => '/var/www/html',
+
+  }
+
+   # Now create media.txt under /opt/dba
+
+  file { '/opt/data/media.txt':
+
+    ensure => 'present',
+
+  }
+
+}
+
+node 'stapp01.stratos.xfusioncorp.com', 'stapp02.stratos.xfusioncorp.com', 'stapp03.stratos.xfusioncorp.com' {
+
+  include symlink
+
+}
+
+ 
+
+Validate the configuration
+
+puppet parser validate official.pp
+
+Now go to app server 1, appserver 2, and appserver 3
+
+Login as root 
+
+sudo su
+
+Type this command to pull configuration
+
+puppet agent -tv
+
+Check /var/www/html and /opt/data
+
+ll /var/www/html
+
+ll /opt/data
